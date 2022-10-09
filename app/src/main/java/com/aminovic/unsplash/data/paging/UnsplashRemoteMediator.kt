@@ -27,16 +27,11 @@ class UnsplashRemoteMediator(
     private val unsplashImageDao = unsplashDatabase.unsplashImageDao()
     private val unsplashRemoteKeysDao = unsplashDatabase.unsplashRemoteKeysDao()
 
-    override suspend fun initialize(): InitializeAction {
-        return InitializeAction.LAUNCH_INITIAL_REFRESH
-    }
-
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, UnsplashImage>
     ): MediatorResult {
         return try {
-            Log.d("hhhhhhhh","load ")
             val currentPage = when (loadType) {
                 LoadType.REFRESH -> {
                     Log.d("hhhhhhhh","refresh ")
@@ -45,8 +40,6 @@ class UnsplashRemoteMediator(
                     remoteKeys?.nextPage?.minus(1) ?: 1
                 }
                 LoadType.PREPEND -> {
-                    Log.d("hhhhhhhh","prepend ")
-
                     val remoteKeys = getRemoteKeyForFirstItem(state)
                     val prevPage = remoteKeys?.prevPage
                         ?: return MediatorResult.Success(
@@ -55,8 +48,6 @@ class UnsplashRemoteMediator(
                     prevPage
                 }
                 LoadType.APPEND -> {
-                    Log.d("hhhhhhhh","load append")
-
                     val remoteKeys = getRemoteKeyForLastItem(state)
                     val nextPage = remoteKeys?.nextPage
                         ?: return MediatorResult.Success(
